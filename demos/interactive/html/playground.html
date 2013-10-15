@@ -830,6 +830,147 @@ clock.repeat(0.5, function () {
         </script>
         
         <script type="application/flocking" id="declarativeScheduling">
+
+
+var pleasures = [4.79,
+6.98,
+6.36,
+5.32,
+6.18,
+6.81,
+6.84,
+6.44,
+6.84,
+5.69,
+6.62,
+7.08,
+6.71,
+4.03,
+4.09,
+5.85,
+7.34,
+8.1,
+4.06,
+5.74,
+6.35,
+6.65,
+5.48,
+6.74,
+7.3,
+5.2,
+4.06,
+7.61,
+7.19,
+5.76,
+7.08,
+6.68,
+6.49,
+4.41,
+5.85,
+6.85,
+6.62,
+6.45,
+6.74,
+6.99,
+4.37,
+5.17,
+5.8,
+8.24,
+1.87,
+7.08,
+7.38,
+3.96,
+6.19,
+6.05,
+4.18,
+6.5,
+6.62,
+1.99,
+6.43,
+7.59,
+3.79,
+5.47,
+6.52,
+5.1,
+4.5,
+6.66,
+5.2,
+6.09,
+6.13,
+5.61,
+6.57,
+5.35,
+5.8,
+6.72,
+7.69,
+7.08,
+5.34,
+5.61,
+2.86,
+4.57,
+3.17,
+5.53,
+6.34,
+5.96,
+5.81,
+5.9,
+6.65,
+5.93,
+6.08,
+7.36,
+6.97,
+4.26,
+7.14,
+3.88,
+5.41,
+5.08,
+4.67,
+5.52,
+6.89,
+7.31,
+7.49,
+7.34,
+5.03,
+7.23,
+6.74,
+4.84,
+6.35,
+6.23,
+7,
+7.49,
+7.27,
+6.65,
+6.97];
+
+// Shamelessly copied from http://www.ronelmm.com/tones/cscale.html
+// A, G, F, E, D, C, B
+var cMajor = [440, 392, 349.23, 329.63, 293.66, 261.63, 246.94];
+
+var minPleasure = Math.min.apply(null, pleasures);
+var maxPleasure = Math.max.apply(null, pleasures);
+
+function convertToRange(value, srcRange, dstRange){
+  // value is outside source range return
+  if (value < srcRange[0] || value > srcRange[1]){
+    return NaN; 
+  }
+
+  var srcMax = srcRange[1] - srcRange[0],
+      dstMax = dstRange[1] - dstRange[0],
+      adjValue = value - srcRange[0];
+
+  return (adjValue * dstMax / srcMax) + dstRange[0];
+
+}
+
+function convertPleasureToRange(pleasure) {
+    var index = Math.round(convertToRange(pleasure, [minPleasure, maxPleasure], [0,6])) % 6;
+    return(cMajor[index]);
+}
+
+var pleasureTones = pleasures.map(convertPleasureToRange);
+console.log(pleasureTones);
+
 // Frequency Stair Stepping Demo
 var clock = flock.enviro.shared.asyncScheduler,
     synth = flock.synth({
@@ -857,7 +998,7 @@ clock.schedule([
                 "carrier.freq": {
                     synthDef: {
                         ugen: "flock.ugen.sequence",
-                        buffer: [110, 220, 330, 440, 550, 660, 880]
+                        buffer: pleasureTones
                     }
                 }
             }
@@ -866,7 +1007,7 @@ clock.schedule([
 
     {
         interval: "once",
-        time: 8,
+        time: 100,
         change: {
             synth: "sin-synth",
             values: {
@@ -877,6 +1018,7 @@ clock.schedule([
         }
     }
 ]);
+        
         </script>
         
         
